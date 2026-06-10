@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Camada base — ajustes globais de renderização
+   ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ==========================================================================
+   Componentes reutilizáveis (DRY) — padrões de UI do "Finance"
+   ========================================================================== */
+@layer components {
+  /* Link de navegação da sidebar */
+  .nav-link {
+    @apply flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-muted
+           transition-colors duration-200 hover:bg-slate-100 hover:text-ink
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40;
+  }
+
+  .nav-link--active {
+    @apply bg-slate-100 text-ink;
+  }
+
+  /* Cartão padrão da interface */
+  .card {
+    @apply rounded-3xl bg-surface p-6 shadow-card ring-1 ring-line/70;
+  }
+
+  /* Botão de ícone (topbar) */
+  .icon-button {
+    @apply relative grid h-11 w-11 place-items-center rounded-xl text-muted
+           transition-colors duration-200 hover:bg-slate-100 hover:text-ink
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40;
+  }
+
+  /* Gráfico de rosca (donut) do "Resumo de Despesas" — proporções calculadas
+     a partir dos valores de cada categoria (total: R$ 4.150,00). */
+  .expense-donut {
+    background: conic-gradient(
+      #fb7da3 0 55.42%,
+      #7fb3d5 55.42% 74.7%,
+      #e6c66e 74.7% 86.75%,
+      #6ed0a3 86.75% 93.98%,
+      #cbd5e1 93.98% 100%
+    );
+  }
+}
+
+/* ==========================================================================
+   Acessibilidade — respeita usuários que preferem menos movimento
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

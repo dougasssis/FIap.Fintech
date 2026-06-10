@@ -1,0 +1,23 @@
+# Dependências
+node_modules/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editores / IDEs
+.idea/
+.vscode/
+*.suo
+*.user
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Referências internas (não fazem parte da entrega)
+References/
+
+# Observação: o arquivo compilado css/styles.css é versionado de propósito,
+# para que o projeto abra direto pelo index.html, sem necessidade de build.

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Finance — painel de controle financeiro pessoal. Acompanhe saldo, receitas, despesas e próximos lançamentos." />
+    <meta name="theme-color" content="#059669" />
+    <title>Finance · Dashboard</title>
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+    <!-- Tipografia (carrega quando online; há fallback de sistema no CSS) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS compilado localmente (abre offline, sem CDN) -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body class="min-h-screen bg-canvas font-sans text-ink antialiased">
+    <!-- ====================================================================
+         Sprite de ícones (SVG) — definido uma vez e reutilizado via <use> (DRY)
+         ==================================================================== -->
+    <svg width="0" height="0" class="hidden" aria-hidden="true" focusable="false">
+      <defs>
+        <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6Zm0 9.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25Zm9.75-9.75A2.25 2.25 0 0 1 15.75 3.75H18A2.25 2.25 0 0 1 20.25 6v2.25a2.25 2.25 0 0 1-2.25 2.25h-2.25a2.25 2.25 0 0 1-2.25-2.25V6Zm0 9.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+        </symbol>
+        <symbol id="i-trend-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+        </symbol>
+        <symbol id="i-trend-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
+        </symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </symbol>
+        <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+        </symbol>
+        <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </symbol>
+        <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 9m18 0V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v3" />
+        </symbol>
+        <symbol id="i-piggy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+        </symbol>
+        <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.5a.75.75 0 0 0 .75.75h4.5a.75.75 0 0 0 .75-.75V15a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v5.25a.75.75 0 0 0 .75.75h4.5a.75.75 0 0 0 .75-.75V9.75" />
+        </symbol>
+        <symbol id="i-credit-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5a2.25 2.25 0 0 0 2.25 2.25Z" />
+        </symbol>
+        <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5 10.5 1.5v9.75h9.75L13.5 22.5v-9H3.75Z" />
+        </symbol>
+        <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+        </symbol>
+        <symbol id="i-briefcase" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.073a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a9.75 9.75 0 0 1-5.357 0l-1.32-.377a2.25 2.25 0 0 1-1.633-2.163V14.15M3.375 8.25h17.25M9 8.25V6.108c0-1.135.845-2.098 1.976-2.192a48.42 48.42 0 0 1 2.048 0c1.131.094 1.976 1.057 1.976 2.192V8.25M3.75 8.25h16.5a1.5 1.5 0 0 1 1.5 1.5v8.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V9.75a1.5 1.5 0 0 1 1.5-1.5Z" />
+        </symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+        </symbol>
+        <symbol id="i-dots" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <div class="lg:flex">
+      <!-- ==================================================================
+           SIDEBAR (desktop)
+           ================================================================== -->
+      <aside class="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-line bg-surface px-5 py-7 lg:flex">
+        <!-- Marca -->
+        <a href="index.html" class="flex items-center gap-3 px-1.5" aria-label="Finance — página inicial">
+          <span class="grid h-10 w-10 place-items-center rounded-xl bg-brand-600 text-white">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 18 9 12l3.75 3.75L20.25 7.5" />
+            </svg>
+          </span>
+          <span class="text-xl font-bold tracking-tight">Finance</span>
+        </a>
+
+        <!-- Navegação principal -->
+        <nav class="mt-9 flex-1 space-y-1.5" aria-label="Navegação principal">
+          <a href="index.html" class="nav-link nav-link--active" aria-current="page">
+            <svg class="h-5 w-5" aria-hidden="true"><use href="#i-grid" /></svg>
+            Dashboard
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="h-5 w-5" aria-hidden="true"><use href="#i-trend-up" /></svg>
+            Registrar Receita
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="h-5 w-5" aria-hidden="true"><use href="#i-trend-down" /></svg>
+            Registrar Despesa
+          </a>
+          <a href="#" class="nav-link">
+            <svg class="h-5 w-5" aria-hidden="true"><use href="#i-clock" /></svg>
+            Histórico
+          </a>
+        </nav>
+
+        <!-- Rodapé: perfil do usuário + logout -->
+        <div class="space-y-2 border-t border-line pt-5">
+          <div class="flex items-center gap-3 rounded-2xl px-2 py-2">
+            <img src="assets/avatar.svg" alt="Avatar de Douglas Assis" class="h-10 w-10 rounded-full" width="40" height="40" />
+            <div class="min-w-0">
+              <p class="truncate text-sm font-semibold">Douglas Assis</p>
+              <p class="truncate text-xs text-muted">Conta Premium</p>
+            </div>
+          </div>
+          <a href="#" class="nav-link">
+            <svg class="h-5 w-5" aria-hidden="true"><use href="#i-logout" /></svg>
+            Logout
+          </a>
+        </div>
+      </aside>
+
+      <!-- ==================================================================
+           CONTEÚDO PRINCIPAL
+           ================================================================== -->
+      <div class="min-w-0 flex-1 lg:pl-72">
+        <!-- Topbar -->
+        <header class="sticky top-0 z-20 border-b border-line bg-canvas/80 px-5 py-4 backdrop-blur sm:px-8">
+          <div class="flex items-center gap-3">
+            <!-- Marca (apenas mobile) -->
+            <a href="index.html" class="flex items-center gap-2 lg:hidden" aria-label="Finance — página inicial">
+              <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 text-white">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 18 9 12l3.75 3.75L20.25 7.5" />
+                </svg>
+              </span>
+              <span class="text-lg font-bold">Finance</span>
+            </a>
+
+            <!-- Saudação (desktop) -->
+            <div class="hidden lg:block">
+              <h1 class="text-xl font-bold tracking-tight">Bem-vindo de volta, Douglas</h1>
+              <p class="text-sm text-muted">Terça-feira, 10 de junho de 2026</p>
+            </div>
+
+            <!-- Ações da direita -->
+            <div class="ml-auto flex items-center gap-2 sm:gap-3">
+              <!-- Busca (desktop) -->
+              <label class="relative hidden md:block">
+                <span class="sr-only">Buscar transações</span>
+                <svg class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-subtle" aria-hidden="true"><use href="#i-search" /></svg>
+                <input
+                  type="search"
+                  placeholder="Buscar transações..."
+                  class="h-11 w-60 rounded-xl border border-line bg-surface pl-11 pr-4 text-sm text-ink placeholder:text-subtle focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+                />
+              </label>
+
+              <button type="button" class="icon-button" aria-label="Notificações">
+                <svg class="h-5 w-5" aria-hidden="true"><use href="#i-bell" /></svg>
+                <span class="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-canvas"></span>
+              </button>
+
+              <!-- User Avatar -->
+              <button type="button" class="flex items-center gap-2 rounded-xl p-1 pr-2 transition-colors duration-200 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40" aria-label="Abrir menu da conta de Douglas Assis">
+                <img src="assets/avatar.svg" alt="Avatar de Douglas Assis" class="h-9 w-9 rounded-full" width="36" height="36" />
+                <span class="hidden text-sm font-semibold sm:block">Douglas</span>
+                <svg class="hidden h-4 w-4 text-muted sm:block" aria-hidden="true"><use href="#i-chevron-down" /></svg>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Conteúdo -->
+        <main class="px-5 pb-28 pt-6 sm:px-8 lg:pb-10">
+          <!-- Saudação (mobile) -->
+          <div class="mb-6 lg:hidden">
+            <h1 class="text-2xl font-bold tracking-tight">Bem-vindo de volta, Douglas</h1>
+            <p class="text-sm text-muted">Terça-feira, 10 de junho de 2026</p>
+          </div>
+
+          <!-- ============================================================
+               KPIs — cartões de indicadores
+               ============================================================ -->
+          <section aria-label="Indicadores financeiros" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            <!-- Saldo total (destaque) -->
+            <article class="rounded-3xl bg-brand-600 p-6 text-white shadow-card">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-brand-100">Saldo total</p>
+                <span class="grid h-10 w-10 place-items-center rounded-xl bg-white/15">
+                  <svg class="h-5 w-5" aria-hidden="true"><use href="#i-wallet" /></svg>
+                </span>
+              </div>
+              <p class="mt-4 text-3xl font-bold tracking-tight">R$ 24.589,12</p>
+              <p class="mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-100">
+                <svg class="h-4 w-4" aria-hidden="true"><use href="#i-trend-up" /></svg>
+                +12,5% em relação ao mês anterior
+              </p>
+            </article>
+
+            <!-- Receitas do mês -->
+            <article class="card">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-muted">Receitas do mês</p>
+                <span class="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600">
+                  <svg class="h-5 w-5" aria-hidden="true"><use href="#i-trend-up" /></svg>
+                </span>
+              </div>
+              <p class="mt-4 text-2xl font-bold tracking-tight">R$ 13.850,00</p>
+              <p class="mt-2 inline-flex items-center gap-1 text-sm font-medium text-brand-600">
+                <svg class="h-4 w-4" aria-hidden="true"><use href="#i-trend-up" /></svg>
+                +8,2%
+              </p>
+            </article>
+
+            <!-- Despesas do mês -->
+            <article class="card">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-muted">Despesas do mês</p>
+                <span class="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-rose-500">
+                  <svg class="h-5 w-5" aria-hidden="true"><use href="#i-trend-down" /></svg>
+                </span>
+              </div>
+              <p class="mt-4 text-2xl font-bold tracking-tight">R$ 4.150,00</p>
+              <p class="mt-2 inline-flex items-center gap-1 text-sm font-medium text-rose-500">
+                <svg class="h-4 w-4" aria-hidden="true"><use href="#i-trend-down" /></svg>
+                -3,1%
+              </p>
+            </article>
+
+            <!-- Economia -->
+            <article class="card">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-muted">Taxa de economia</p>
+                <span class="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-amber-500">
+                  <svg class="h-5 w-5" aria-hidden="true"><use href="#i-piggy" /></svg>
+                </span>
+              </div>
+              <p class="mt-4 text-2xl font-bold tracking-tight">70%</p>
+              <div class="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                <div class="h-full w-[70%] rounded-full bg-amber-400"></div>
+              </div>
+            </article>
+          </section>
+
+          <!-- ============================================================
+               Linha intermediária: Despesas + Próximos 7 dias + Cartão
+               ============================================================ -->
+          <section class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <!-- Resumo de despesas (donut) -->
+            <article class="card lg:col-span-1">
+              <div class="flex items-center justify-between">
+                <h2 class="text-base font-semibold">Resumo de despesas</h2>
+                <button type="button" class="icon-button h-9 w-9" aria-label="Mais opções do resumo de despesas">
+                  <svg class="h-5 w-5" aria-hidden="true"><use href="#i-dots" /></svg>
+                </button>
+              </div>
+
+              <div class="mt-5 flex justify-center">
+                <div class="expense-donut relative grid h-44 w-44 place-items-center rounded-full" role="img" aria-label="Gráfico de despesas: Moradia 55%, Alimentação 19%, Transporte 12%, Lazer 7%, Outros 6%">
+                  <div class="grid h-28 w-28 place-items-center rounded-full bg-surface text-center">
+                    <div>
+                      <p class="text-xs text-muted">Total</p>
+                      <p class="text-lg font-bold tracking-tight">R$ 4.150</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <ul class="mt-6 space-y-3 text-sm">
+                <li class="flex items-center justify-between">
+                  <span class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-[#fb7da3]"></span>Moradia</span>
+                  <span class="font-semibold">R$ 2.300,00</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-[#7fb3d5]"></span>Alimentação</span>
+                  <span class="font-semibold">R$ 800,00</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-[#e6c66e]"></span>Transporte</span>
+                  <span class="font-semibold">R$ 500,00</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-[#6ed0a3]"></span>Lazer</span>
+                  <span class="font-semibold">R$ 300,00</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span class="flex items-center gap-2.5"><span class="h-2.5 w-2.5 rounded-full bg-[#cbd5e1]"></span>Outros</span>
+                  <span class="font-semibold">R$ 250,00</span>
+                </li>
+              </ul>
+            </article>
+
+            <!-- Próximos 7 dias -->
+            <article class="card lg:col-span-1">
+              <div class="flex items-center justify-between">
+                <h2 class="text-base font-semibold">Próximos 7 dias</h2>
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-muted">5 lançamentos</span>
+              </div>
+
+              <ul class="mt-5 divide-y divide-line">
+                <li class="flex items-center justify-between py-3">
+                  <div>
+                    <p class="text-sm font-semibold">Aluguel</p>
+                    <p class="text-xs text-muted">30 de abr, 2026</p>
+                  </div>
+                  <span class="text-sm font-semibold text-rose-500">- R$ 2.400,00</span>
+                </li>
+                <li class="flex items-center justify-between py-3">
+                  <div>
+                    <p class="text-sm font-semibold">Cartão Visa 3460</p>
+                    <p class="text-xs text-muted">02 de mai, 2026</p>
+                  </div>
+                  <span class="text-sm font-semibold text-rose-500">- R$ 1.400,00</span>
+                </li>
+                <li class="flex items-center justify-between py-3">
+                  <div>
+                    <p class="text-sm font-semibold">Salário</p>
+                    <p class="text-xs text-muted">05 de mai, 2026</p>
+                  </div>
+                  <span class="text-sm font-semibold text-brand-600">+ R$ 12.500,00</span>
+                </li>
+                <li class="flex items-center justify-between py-3">
+                  <div>
+                    <p class="text-sm font-semibold">Conta de Energia</p>
+                    <p class="text-xs text-muted">03 de mai, 2026</p>
+                  </div>
+                  <span class="text-sm font-semibold text-rose-500">- R$ 450,00</span>
+                </li>
+                <li class="flex items-center justify-between py-3">
+                  <div>
+                    <p class="text-sm font-semibold">Freelance</p>
+                    <p class="text-xs text-muted">08 de mai, 2026</p>
+                  </div>
+                  <span class="text-sm font-semibold text-brand-600">+ R$ 1.350,00</span>
+                </li>
+              </ul>
+
+              <div class="mt-4 flex items-center justify-between rounded-2xl bg-canvas px-4 py-3">
+                <span class="text-sm font-medium text-muted">Saldo projetado</span>
+                <span class="text-base font-bold">R$ 34.189,12</span>
+              </div>
+            </article>
+
+            <!-- Meu cartão -->
+            <article class="card flex flex-col lg:col-span-1">
+              <h2 class="text-base font-semibold">Meu cartão</h2>
+
+              <div class="relative mt-5 overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-950 p-5 text-white">
+                <div class="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-white/5"></div>
+                <div class="absolute -bottom-12 -left-6 h-28 w-28 rounded-full bg-white/5"></div>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-slate-300">Finance Black</span>
+                  <svg class="h-6 w-6 text-slate-300" aria-hidden="true"><use href="#i-credit-card" /></svg>
+                </div>
+                <p class="mt-7 font-mono text-lg tracking-[0.2em]">•••• •••• •••• 3460</p>
+                <div class="mt-5 flex items-end justify-between">
+                  <div>
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">Titular</p>
+                    <p class="text-sm font-medium">Douglas Assis</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">Validade</p>
+                    <p class="text-sm font-medium">08/29</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-5 space-y-2">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-muted">Fatura atual</span>
+                  <span class="font-semibold">R$ 1.400,00</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-muted">Limite disponível</span>
+                  <span class="font-semibold">R$ 8.600,00</span>
+                </div>
+                <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div class="h-full w-[14%] rounded-full bg-brand-500"></div>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <!-- ============================================================
+               Histórico de transações
+               ============================================================ -->
+          <section class="mt-6">
+            <article class="card !p-0">
+              <div class="flex items-center justify-between p-6">
+                <h2 class="text-base font-semibold">Histórico de transações</h2>
+                <a href="#" class="text-sm font-medium text-brand-600 transition-colors duration-200 hover:text-brand-700">Ver tudo</a>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full min-w-[640px] text-left text-sm">
+                  <thead>
+                    <tr class="border-y border-line bg-canvas/60 text-xs uppercase tracking-wide text-muted">
+                      <th scope="col" class="px-6 py-3 font-medium">Descrição</th>
+                      <th scope="col" class="px-6 py-3 font-medium">Categoria</th>
+                      <th scope="col" class="px-6 py-3 font-medium">Data</th>
+                      <th scope="col" class="px-6 py-3 font-medium">Status</th>
+                      <th scope="col" class="px-6 py-3 text-right font-medium">Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-line">
+                    <tr class="transition-colors duration-200 hover:bg-canvas/60">
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600"><svg class="h-5 w-5" aria-hidden="true"><use href="#i-briefcase" /></svg></span>
+                          <span class="font-semibold">Salário</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-muted">Receita</td>
+                      <td class="px-6 py-4 text-muted">05 mai, 2026</td>
+                      <td class="px-6 py-4"><span class="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">Concluído</span></td>
+                      <td class="px-6 py-4 text-right font-semibold text-brand-600">+ R$ 12.500,00</td>
+                    </tr>
+                    <tr class="transition-colors duration-200 hover:bg-canvas/60">
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 place-items-center rounded-lg bg-rose-50 text-rose-500"><svg class="h-5 w-5" aria-hidden="true"><use href="#i-home" /></svg></span>
+                          <span class="font-semibold">Aluguel</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-muted">Moradia</td>
+                      <td class="px-6 py-4 text-muted">30 abr, 2026</td>
+                      <td class="px-6 py-4"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-600">Pendente</span></td>
+                      <td class="px-6 py-4 text-right font-semibold text-rose-500">- R$ 2.400,00</td>
+                    </tr>
+                    <tr class="transition-colors duration-200 hover:bg-canvas/60">
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 place-items-center rounded-lg bg-rose-50 text-rose-500"><svg class="h-5 w-5" aria-hidden="true"><use href="#i-cart" /></svg></span>
+                          <span class="font-semibold">Mercado</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-muted">Alimentação</td>
+                      <td class="px-6 py-4 text-muted">28 abr, 2026</td>
+                      <td class="px-6 py-4"><span class="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">Concluído</span></td>
+                      <td class="px-6 py-4 text-right font-semibold text-rose-500">- R$ 320,00</td>
+                    </tr>
+                    <tr class="transition-colors duration-200 hover:bg-canvas/60">
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 place-items-center rounded-lg bg-rose-50 text-rose-500"><svg class="h-5 w-5" aria-hidden="true"><use href="#i-bolt" /></svg></span>
+                          <span class="font-semibold">Conta de Energia</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-muted">Utilidades</td>
+                      <td class="px-6 py-4 text-muted">25 abr, 2026</td>
+                      <td class="px-6 py-4"><span class="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">Concluído</span></td>
+                      <td class="px-6 py-4 text-right font-semibold text-rose-500">- R$ 250,00</td>
+                    </tr>
+                    <tr class="transition-colors duration-200 hover:bg-canvas/60">
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <span class="grid h-9 w-9 place-items-center rounded-lg bg-brand-50 text-brand-600"><svg class="h-5 w-5" aria-hidden="true"><use href="#i-trend-up" /></svg></span>
+                          <span class="font-semibold">Freelance</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 text-muted">Receita</td>
+                      <td class="px-6 py-4 text-muted">22 abr, 2026</td>
+                      <td class="px-6 py-4"><span class="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">Concluído</span></td>
+                      <td class="px-6 py-4 text-right font-semibold text-brand-600">+ R$ 1.350,00</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- ==================================================================
+         Navegação inferior (mobile) — substitui a sidebar em telas pequenas
+         ================================================================== -->
+    <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 backdrop-blur lg:hidden" aria-label="Navegação principal">
+      <div class="mx-auto flex max-w-md items-center justify-around px-2 py-2">
+        <a href="index.html" class="flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-xs font-medium text-brand-600" aria-current="page">
+          <svg class="h-6 w-6" aria-hidden="true"><use href="#i-grid" /></svg>
+          Início
+        </a>
+        <a href="#" class="flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-xs font-medium text-muted transition-colors hover:text-ink">
+          <svg class="h-6 w-6" aria-hidden="true"><use href="#i-trend-up" /></svg>
+          Receita
+        </a>
+        <a href="#" class="-mt-6 grid h-14 w-14 flex-none place-items-center rounded-2xl bg-brand-600 text-white shadow-card transition-colors hover:bg-brand-700" aria-label="Novo lançamento">
+          <svg class="h-6 w-6" aria-hidden="true"><use href="#i-plus" /></svg>
+        </a>
+        <a href="#" class="flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-xs font-medium text-muted transition-colors hover:text-ink">
+          <svg class="h-6 w-6" aria-hidden="true"><use href="#i-trend-down" /></svg>
+          Despesa
+        </a>
+        <a href="#" class="flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-xs font-medium text-muted transition-colors hover:text-ink">
+          <svg class="h-6 w-6" aria-hidden="true"><use href="#i-clock" /></svg>
+          Histórico
+        </a>
+      </div>
+    </nav>
+  </body>
+</html>

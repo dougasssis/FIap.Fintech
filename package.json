@@ -1,0 +1,21 @@
+{
+  "name": "finance-fintech",
+  "version": "1.0.0",
+  "description": "Tela de Dashboard do projeto Finance (Fintech) - FIAP Fase 4",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./css/styles.css --minify",
+    "watch": "tailwindcss -i ./src/input.css -o ./css/styles.css --watch"
+  },
+  "keywords": [
+    "fintech",
+    "dashboard",
+    "tailwindcss",
+    "fiap"
+  ],
+  "author": "Douglas Assis",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
