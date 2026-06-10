@@ -1,12 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // Tailwind escaneia o HTML para gerar apenas as classes realmente usadas,
-  // mantendo o CSS final enxuto (tree-shaking).
   content: ["./*.html"],
   theme: {
     extend: {
       fontFamily: {
-        // IBM Plex Sans quando online; fallback para fontes do sistema (100% offline).
         sans: [
           '"IBM Plex Sans"',
           "system-ui",
@@ -19,7 +16,6 @@ module.exports = {
         ],
       },
       colors: {
-        // Identidade visual "Finance" — verde esmeralda como cor de marca.
         brand: {
           50: "#ECFDF5",
           100: "#D1FAE5",
